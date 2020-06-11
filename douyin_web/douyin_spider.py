@@ -201,8 +201,7 @@ def main(task_json):
 #
 #     import douyin_web.mq_tools as pq_mq
 #
-#     mq = pq_mq.MqClient((pq_mq.MqConfig(ip="", user="",
-#                                         password="", virtual='/')))
+#     mq = pq_mq.MqClient((pq_mq.MqConfig(ip="", user="",password="", virtual='/')))
 #
 #     QUEUE_TASK = "video_task_dy"
 #     while True:
