@@ -1,0 +1,96 @@
+# -*- coding: utf-8 -*-
+import requests
+import re
+from loguru import logger
+headers = {
+    'user-agent': "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36",
+    "sec-fetch-mode": "cors",
+    "sec-fetch-site": "same-origin",
+    "accept": "application/json",
+    "accept-encoding": "gzip, deflate",
+    "accept-language": "zh-CN,zh;q=0.9"
+}
+
+response = requests.get('https://www.iesdouyin.com/share/user/102064772608',headers=headers,verify=False)
+
+tac = re.search(r"tac='([\s\S]*?)'</script>",response.text).group(1)
+print(tac)
+print(tac.split("|")[0])
+
+data = {
+    "tac":tac.split("|")[0],
+    'user_id':'102064772608'
+}
+response = requests.post('http://49.233.200.77:5001',data=data)
+
+sign = response.json().get('signature')
+print(sign)
+
+sign = "oOJkURAT.l9IOEYsZ159JKDiZU"
+url = "https://www.iesdouyin.com/web/api/v2/aweme/post/?user_id={}&sec_uid=&count=21&max_cursor=0&aid=1128&_signature={}"
+# url = "https://www.iesdouyin.com/web/api/v2/aweme/post/?&sec_uid={}&count=21&max_cursor={}&aid=1128&_signature={}"
+uid = '''108772418543'''
+
+proxies = {
+}
+
+
+url = url.format(uid.strip(),sign)
+response = requests.get(url,headers=headers,verify=False,proxies=proxies)
+datas = response.json()
+
+print(datas)
+
+
+
+data_list = datas.get("aweme_list")
+
+for data in data_list:
+
+    assetCode = data.get("statistics").get("aweme_id","")
+    title = data.get("desc","")
+    description = data.get("desc","")
+    createDate = data.get("create_time","")
+    picUrl = data.get("video").get("cover").get("url_list")[0]
+    videoUrl = data.get("video").get("download_addr").get("url_list")[-1]
+    visitCount = data.get("statistics").get("play_count","")
+    rebackCount= data.get("statistics").get("comment_count","")
+    shareCount= data.get("statistics").get("share_count","")
+    repostsCount= data.get("statistics").get("forward_count","")
+    likeCount= data.get("statistics").get("digg_count","")
+    downloadCount= data.get("statistics").get("download_count","")
+    from loguru import logger
+
+    #用户信息
+    accountName = data.get("author").get("unique_id","")
+    imgUri = data.get("author").get("avatar_thumb").get("url_list", [])[0]
+    sourceName = data.get("author").get("nickname","")
+    secUid = data.get("author").get("sec_uid","")
+    logger.info(assetCode)
+    logger.info(title)
+    logger.info(description)
+    logger.info(createDate)
+    logger.info(picUrl)
+    logger.info(videoUrl)
+    logger.info(visitCount)
+    logger.info(rebackCount)
+    logger.info(shareCount)
+    logger.info(repostsCount)
+    logger.info(likeCount)
+    logger.info(downloadCount)
+    logger.info(accountName)
+    logger.info(imgUri)
+    logger.info(sourceName)
+    logger.info(secUid )
+
+
+    break
+if datas.get("has_more"):
+    next_page = datas.get("max_cursor")
+    print(next_page)
+
+    url = "https://www.iesdouyin.com/web/api/v2/aweme/post/?user_id={}&sec_uid=&count=21&max_cursor={}&aid=1128&_signature={}"
+    url = url.format(uid.strip(),next_page,sign)
+    response = requests.get(url,headers=headers,verify=False,proxies=proxies)
+    datas = response.json()
+    print(datas)
