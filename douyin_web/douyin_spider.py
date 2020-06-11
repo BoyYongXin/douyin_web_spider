@@ -178,7 +178,6 @@ def parse_json_data(uid, datas, limit_publish_time, task_json, callbackUrl):
 
 @debug
 def send_data(callbackUrl,datas):
-    # callbackUrl = "http://192.168.2.249:8988/miaback/MiaVideoList!getMiaVideoJsonList.action"
     response = requests.post(callbackUrl, data={"value": json.dumps(datas)})
     return response.text
 
@@ -202,8 +201,8 @@ def main(task_json):
 #
 #     import douyin_web.mq_tools as pq_mq
 #
-#     mq = pq_mq.MqClient((pq_mq.MqConfig(ip="111.205.235.10", user="bluewit",
-#                                         password="7QllpkawY93dnA7", virtual='/')))
+#     mq = pq_mq.MqClient((pq_mq.MqConfig(ip="", user="",
+#                                         password="", virtual='/')))
 #
 #     QUEUE_TASK = "video_task_dy"
 #     while True:
